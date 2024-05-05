@@ -1,0 +1,9 @@
+__pycache__/
+logs/
+
+# Notebooks used for testing purposes
+*.ipynb
+
+# The script that spawns the browser for scraping should not be added to the repository since
+# it contains indication of the website used for scraping
+init_browser.py
