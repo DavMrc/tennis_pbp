@@ -20,9 +20,11 @@ def scrape_tournaments_href(headless):
 
     # Click the drop down of the tournaments
     # to list all of them
-    wait.until(
+    drop_down = wait.until(
         EC.presence_of_element_located((By.ID, 'lmenu_5724'))
-    ).click()
+    )
+    browser.execute_script("arguments[0].scrollIntoView();", drop_down)
+    drop_down.click()
 
     # parse the tournaments
     tournaments_div = wait.until(
@@ -31,7 +33,7 @@ def scrape_tournaments_href(headless):
     tournaments_list = tournaments_div.find_elements(By.CLASS_NAME, "lmc__templateHref")
     
     # Add all the tournaments' seasons there are info about
-    tournaments_href = [t.get_attribute('href')+'archive/' for t in tournaments_list]
+    tournaments_href = [t.get_attribute('href') for t in tournaments_list]
 
     browser.close()
 
@@ -53,6 +55,10 @@ def scrape_tournaments_data(chunk, headless, logging_path):
     for t_href in chunk:
         logging.info(f"Processing tournament {t_href}")
         browser.get(t_href)
+        tournament_city_and_surface_div = "_link_1mowf_5._linkBase_1mowf_12._primary_1mowf_30.wclLeagueHeader__textColor"
+        tournament_city_and_surface = browser.find_element(By.CLASS_NAME, tournament_city_and_surface_div).text
+
+        browser.get(t_href+'archive/')
 
         image_url = wait.until(
             EC.presence_of_element_located((By.CLASS_NAME, 'heading__logo'))
@@ -71,6 +77,7 @@ def scrape_tournaments_data(chunk, headless, logging_path):
                 'name': name,
                 'href': t_href,
                 'image_url': image_url,
+                'city_and_surface': tournament_city_and_surface,
                 'year': a_tag.text[-4:],
                 'href': a_tag.get_property('href')+'results/'
             })
@@ -99,3 +106,9 @@ def main(headless, logging_path):
     returned_dfs = pool.starmap(scrape_tournaments_data, args)
 
     return pd.concat(returned_dfs, ignore_index=True)
+
+
+if __name__ == "__main__":
+    df = main(True, os.getcwd())
+
+    df.to_excel('./dada.xlsx', 'Sheet1', index=False)
