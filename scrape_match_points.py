@@ -32,9 +32,15 @@ def check_if_pbp_scores(browser):
 
 # Find sets played
 def scrape_sets(browser):
-    sets_elems = WebDriverWait(browser, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "_tabs_1b0gr_5._tabsTertiary_1b0gr_75"))
-    ).find_elements(    # find all a children of the above div
+    try:
+        sets_div = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "_tabs_1b0gr_5._tabsTertiary_1b0gr_75"))
+        )
+    except:
+        sets_div = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "_tabs_14itw_4._tabsTertiary_14itw_74"))
+        )
+    sets_elems = sets_div.find_elements(
         By.TAG_NAME,
         "a",
     )
