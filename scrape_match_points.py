@@ -74,10 +74,6 @@ def scrape_games_data(browser, set_id:str, players_data:dict):
         score_raw = re.findall(r"\d{1,2}", score_raw)
         score = '-'.join(score_raw)
 
-        if score == '7-6' or score == '6-7':
-            # Will be evalued at the next iteration
-            is_tiebreak = True
-
         # Parse if it's the home player's serve or the away player's serve
         home_serving = game.find_element(
             By.CLASS_NAME,
@@ -108,12 +104,16 @@ def scrape_games_data(browser, set_id:str, players_data:dict):
             'home_serving': home_serving != '',
             'away_serving': away_serving != '',
             'home_lost_serve': home_lost_serve == 'LOST SERVE',
-            'away_lost_serve': away_lost_serve == 'LOST SERVE'
+            'away_lost_serve': away_lost_serve == 'LOST SERVE',
+            'is_tie_break': is_tiebreak
         }
         data.update(players_data)
 
         # Generate a dict "row" and append it
         games_data.append(data)
+
+        if score == '7-6' or score == '6-7':
+            is_tiebreak = True
 
     return games_data
 
