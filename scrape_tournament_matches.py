@@ -97,7 +97,7 @@ def get_matches(chunk, headless, logging_fname):
     return pd.concat(dfs, ignore_index=True)
 
 
-def main(tournaments_df, headless, logging_path):
+def main(tournaments_df, headless, logging_path=os.getcwd()):
     logging_fname = f"{logging_path}/logs/scrape_tournament_matches_log.log"
 
     if os.path.exists(logging_fname):

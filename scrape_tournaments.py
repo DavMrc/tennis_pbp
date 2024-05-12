@@ -82,10 +82,13 @@ def scrape_tournaments_data(chunk, headless, logging_path):
     return pd.DataFrame(tournaments_data)
 
 
-def main(headless, logging_path):
+def main(headless, logging_path=os.getcwd()):
     tournaments_href = scrape_tournaments_href(headless)
     
-    num_processes = cpu_count() // 2
+    if len(tournaments_href) < cpu_count()-2:
+        num_processes = 1
+    else:
+        num_processes = cpu_count()-2
     # Split the dataframe into chunks
     chunk_size = len(tournaments_href) // num_processes
 

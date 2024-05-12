@@ -248,16 +248,16 @@ def scrape_match(chunk, headless, logging_fname):
     return matches_df, fails_df
 
 
-def main(matches, headless, logging_path):
+def main(matches, headless, logging_path=os.getcwd()):
     logging_fname = f"{logging_path}/logs/scrape_matches_points_log.log"
 
     if os.path.exists(logging_fname):
         os.remove(logging_fname)
     
-    if len(matches) < cpu_count():
+    if len(matches) < cpu_count()-2:
         num_processes = 1
     else:
-        num_processes = cpu_count()
+        num_processes = cpu_count()-2
 
     # Split the dataframe into chunks
     chunk_size = len(matches) // num_processes
